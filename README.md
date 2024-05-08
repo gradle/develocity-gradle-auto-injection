@@ -1,0 +1,1 @@
+A script that can be used by CI integrations to inject Develocity into a Gradle build.
