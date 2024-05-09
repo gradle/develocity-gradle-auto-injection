@@ -1,0 +1,45 @@
+name: Send PR to update consumer
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        required: true
+      repository:
+        type: string
+        required: true
+      script-location:
+        type: string
+        required: true
+    secrets:
+      GH_TOKEN:
+        required: true
+      
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+            ref: main # Include the changes commmited in the previous job
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.repository }}
+          path: ${{ inputs.repository }}
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Copy reference script
+        run: cp reference/develocity-injection.init.gradle ${{ inputs.repository }}/${{ inputs.script-location }}
+
+      # If there are no changes, this action will not create a pull request
+      - name: Create or update pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: bot/develocity-injection-init-script-update
+          delete-branch: true
+          commit-message: 'Update develocity-injection init script to ${{ inputs.version }}'
+          title: 'Update develocity-injection init script'
+          path: ${{ inputs.repository }}
+          token: ${{ secrets.GH_TOKEN }}

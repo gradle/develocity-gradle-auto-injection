@@ -35,30 +35,12 @@ jobs:
           commit_message: '[bot] Update develocity-injection reference script as ${{ inputs.version }}'
           tagging_message: '${{ inputs.version }}'
   
-  release:
-    needs: update-reference
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-            ref: main # Include the changes commmited in the previous job
-
-      - uses: actions/checkout@v4
-        with:
-          repository: 'gradle/actions'
-          path: actions
-          token: ${{ secrets.GH_TOKEN }}
-
-      - name: Copy reference script
-        run: cp reference/develocity-injection.init.gradle actions/sources/src/resources/init-scripts/gradle-actions.inject-develocity.init.gradle
-
-      # If there are no changes, this action will not create a pull request
-      - name: Create or update pull request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          branch: bot/develocity-injection-init-script-update
-          delete-branch: true
-          commit-message: 'Update develocity-injection init script to ${{ inputs.version }}'
-          title: 'Update develocity-injection init script'
-          path: actions
-          token: ${{ secrets.GH_TOKEN }}
+  update-gradle-actions:
+    needs: [update-reference]
+    uses: ./.github/workflows/gradle-send-update-pr.yml
+    with:
+      version: ${{ inputs.version }}
+      repository: 'gradle/actions'
+      script-location: 'sources/src/resources/init-scripts/gradle-actions.inject-develocity.init.gradle'
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
