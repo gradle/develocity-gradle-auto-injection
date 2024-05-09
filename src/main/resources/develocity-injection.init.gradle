@@ -1,5 +1,5 @@
 /*
- * Initscript for auto-injection of Develocity into Gradle builds.
+ * Initscript for injection of Develocity into Gradle builds.
  * Version: <<version>>
  */
 
