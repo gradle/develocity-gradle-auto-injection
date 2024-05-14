@@ -74,7 +74,7 @@ jobs:
       repository: 'bigdaz/develocity-bamboo-plugin'
       script-location: 'src/main/resources/develocity/gradle/develocity-init-script.gradle'
       post-process: |
-        sed -i "s/def ENV_VAR_SUFFIX = ''/def ENV_VAR_SUFFIX = 'bamboo_'/" src/main/resources/develocity/gradle/develocity-init-script.gradle
+        sed -i "s/def ENV_VAR_PREFIX = ''/def ENV_VAR_PREFIX = 'bamboo_'/" src/main/resources/develocity/gradle/develocity-init-script.gradle
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
