@@ -55,6 +55,18 @@ jobs:
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
+  update-gitlab-templates:
+    needs: [update-reference]
+    uses: ./.github/workflows/gradle-send-update-pr.yml
+    with:
+      version: ${{ inputs.version }}
+      repository: 'bigdaz/jenkins-gradle-plugin'
+      script-location: 'src/main/resources/hudson/plugins/gradle/injection/init-script.gradle'
+      post-process: |
+          ./build.sh
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
   update-develocity-bamboo-plugin:
     needs: [update-reference]
     uses: ./.github/workflows/gradle-send-update-pr.yml
