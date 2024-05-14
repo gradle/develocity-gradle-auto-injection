@@ -12,6 +12,9 @@ on:
       script-location:
         type: string
         required: true
+      post-process:
+        type: string
+        required: false
     secrets:
       GH_TOKEN:
         required: true
@@ -32,6 +35,11 @@ jobs:
 
       - name: Copy reference script
         run: cp reference/develocity-injection.init.gradle ${{ inputs.repository }}/${{ inputs.script-location }}
+
+      - name: Post-process target repository
+        if: ${{ inputs.post-process }}
+        working-directory: ${{ inputs.repository }}
+        run: ${{ inputs.post-process }}
 
       # If there are no changes, this action will not create a pull request
       - name: Create or update pull request
