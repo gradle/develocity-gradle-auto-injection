@@ -1,6 +1,6 @@
 /*
  * Initscript for injection of Develocity into Gradle builds.
- * Version: v0.2.0
+ * Version: v0.3.0
  */
 
 import org.gradle.util.GradleVersion
@@ -14,8 +14,9 @@ initscript {
         return
     }
 
+    def ENV_VAR_PREFIX = ''
     def getInputParam = { String name ->
-        def envVarName = name.toUpperCase().replace('.', '_').replace('-', '_')
+        def envVarName = ENV_VAR_PREFIX + name.toUpperCase().replace('.', '_').replace('-', '_')
         return System.getProperty(name) ?: System.getenv(envVarName)
     }
 
@@ -98,8 +99,9 @@ if (!isTopLevelBuild) {
     return
 }
 
+def ENV_VAR_PREFIX = ''
 def getInputParam = { String name ->
-    def envVarName = name.toUpperCase().replace('.', '_').replace('-', '_')
+    def envVarName = ENV_VAR_PREFIX + name.toUpperCase().replace('.', '_').replace('-', '_')
     return System.getProperty(name) ?: System.getenv(envVarName)
 }
 
