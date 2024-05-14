@@ -45,6 +45,17 @@ jobs:
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
+  update-develocity-gitlab-templates:
+    needs: [update-reference]
+    uses: ./.github/workflows/gradle-send-update-pr.yml
+    with:
+      version: ${{ inputs.version }}
+      repository: 'bigdaz/develocity-gitlab-templates'
+      script-location: 'src/gradle/init-scripts/develocity-injection.init.gradle'
+      post-process: './build.sh'
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
   update-jenkins-gradle-plugin:
     needs: [update-reference]
     uses: ./.github/workflows/gradle-send-update-pr.yml
@@ -52,18 +63,6 @@ jobs:
       version: ${{ inputs.version }}
       repository: 'bigdaz/jenkins-gradle-plugin'
       script-location: 'src/main/resources/hudson/plugins/gradle/injection/init-script.gradle'
-    secrets:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-  update-gitlab-templates:
-    needs: [update-reference]
-    uses: ./.github/workflows/gradle-send-update-pr.yml
-    with:
-      version: ${{ inputs.version }}
-      repository: 'bigdaz/jenkins-gradle-plugin'
-      script-location: 'src/main/resources/hudson/plugins/gradle/injection/init-script.gradle'
-      post-process: |
-          ./build.sh
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
@@ -84,15 +83,5 @@ jobs:
       version: ${{ inputs.version }}
       repository: 'bigdaz/teamcity-build-scan-plugin'
       script-location: 'agent/src/main/resources/build-scan-init.gradle'
-    secrets:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-  update-develocity-gitlab-templates:
-    needs: [update-reference]
-    uses: ./.github/workflows/gradle-send-update-pr.yml
-    with:
-      version: ${{ inputs.version }}
-      repository: 'bigdaz/develocity-gitlab-templates'
-      script-location: 'src/gradle/init-scripts/develocity-injection.init.gradle'
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
