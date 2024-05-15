@@ -71,7 +71,7 @@ jobs:
     uses: ./.github/workflows/gradle-send-update-pr.yml
     with:
       version: ${{ inputs.version }}
-      repository: 'bigdaz/develocity-bamboo-plugin'
+      repository: 'gradle/develocity-bamboo-plugin'
       script-location: 'src/main/resources/develocity/gradle/develocity-init-script.gradle'
       post-process: |
         sed -i "s/def ENV_VAR_PREFIX = ''/def ENV_VAR_PREFIX = 'bamboo_'/" src/main/resources/develocity/gradle/develocity-init-script.gradle
