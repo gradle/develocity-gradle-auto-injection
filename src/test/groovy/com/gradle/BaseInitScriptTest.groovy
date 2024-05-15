@@ -46,12 +46,12 @@ abstract class BaseInitScriptTest extends Specification {
     static final String PUBLIC_BUILD_SCAN_ID = 'i2wepy2gr7ovw'
     static final String DEFAULT_SCAN_UPLOAD_TOKEN = 'scan-upload-token'
     static final String ROOT_PROJECT_NAME = 'test-init-script'
+    static final String INIT_SCRIPT_SOURCE = 'src/main/resources/develocity-injection.init.gradle'
     boolean failScanUpload = false
 
     File settingsFile
     File buildFile
-
-    def initScript = 'src/main/resources/develocity-injection.init.gradle'
+    File initScriptFile
 
     boolean allowDevelocityDeprecationWarning = false
 
@@ -115,6 +115,9 @@ abstract class BaseInitScriptTest extends Specification {
     }
 
     def setup() {
+        initScriptFile = new File(testProjectDir, 'develocity-injection.init.gradle')
+        initScriptFile.text = new File(INIT_SCRIPT_SOURCE).text
+
         settingsFile = new File(testProjectDir, 'settings.gradle')
         buildFile = new File(testProjectDir, 'build.gradle')
 
@@ -188,7 +191,7 @@ abstract class BaseInitScriptTest extends Specification {
     }
 
     GradleRunner createRunner(List<String> args, GradleVersion gradleVersion = GradleVersion.current(), Map<String, String> envVars = [:]) {
-        args << '-I' << new File(initScript).absolutePath
+        args << '-I' << initScriptFile.absolutePath
 
         def runner = ((DefaultGradleRunner) GradleRunner.create())
             .withGradleVersion(gradleVersion.version)
@@ -277,7 +280,5 @@ abstract class BaseInitScriptTest extends Specification {
         String toString() {
             return "Gradle " + gradleVersion.version
         }
-
     }
-
 }

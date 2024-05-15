@@ -104,6 +104,11 @@ if (develocityInjectionEnabled) {
     enableDevelocityInjection()
 }
 
+def buildScanCaptureEnabled = this.metaClass.respondsTo(this, 'captureBuildScanLink', String)
+if (buildScanCaptureEnabled) {
+    enableBuildScanLinkCapture()
+}
+
 void enableDevelocityInjection() {
     def BUILD_SCAN_PLUGIN_ID = 'com.gradle.build-scan'
     def BUILD_SCAN_PLUGIN_CLASS = 'com.gradle.scan.plugin.BuildScanPlugin'
@@ -368,4 +373,40 @@ static boolean isAtLeast(String versionUnderTest, String referenceVersion) {
 
 static boolean isNotAtLeast(String versionUnderTest, String referenceVersion) {
     !isAtLeast(versionUnderTest, referenceVersion)
+}
+
+void enableBuildScanLinkCapture() {
+    def BUILD_SCAN_PLUGIN_ID = 'com.gradle.build-scan'
+    def DEVELOCITY_PLUGIN_ID = 'com.gradle.develocity'
+
+    // Conditionally apply and configure the Develocity plugin
+    if (GradleVersion.current() < GradleVersion.version('6.0')) {
+        rootProject {
+            pluginManager.withPlugin(BUILD_SCAN_PLUGIN_ID) {
+                // Only execute if develocity plugin isn't applied.
+                if (gradle.rootProject.extensions.findByName("develocity")) return
+                buildScanPublishedAction(buildScan)
+            }
+
+            pluginManager.withPlugin(DEVELOCITY_PLUGIN_ID) {
+                buildScanPublishedAction(develocity.buildScan)
+            }
+        }
+    } else {
+        gradle.settingsEvaluated { settings ->
+            eachDevelocitySettingsExtension(settings) { ext ->
+                buildScanPublishedAction(ext.buildScan)
+            }
+        }
+    }
+}
+
+// Action will only be called if a `captureBuildScanLink` method is present in this file.
+// Add `void captureBuildScanLink(String) {}` to respond to buildScanPublished events
+void buildScanPublishedAction(def buildScanExtension) {
+    if (buildScanExtension.metaClass.respondsTo(buildScanExtension, 'buildScanPublished', Action)) {
+        buildScanExtension.buildScanPublished { scan ->
+            captureBuildScanLink(scan.buildScanUri.toString())
+        }
+    }
 }

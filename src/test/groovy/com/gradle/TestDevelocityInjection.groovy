@@ -407,16 +407,20 @@ class TestDevelocityInjection extends BaseInitScriptTest {
         assert 1 == result.output.count(enforceUrl)
     }
 
-    private BuildResult run(TestGradleVersion testGradleVersion, TestConfig config, List<String> args = ["help"]) {
+    private BuildResult run(TestGradleVersion testGradleVersion, DvInjectionTestConfig config, List<String> args = ["help"]) {
         return run(args, testGradleVersion.gradleVersion, config.envVars)
     }
 
-    private TestConfig testConfig(String develocityPluginVersion = DEVELOCITY_PLUGIN_VERSION) {
-        new TestConfig(develocityPluginVersion)
+    DvInjectionTestConfig testConfig(String develocityPluginVersion = DEVELOCITY_PLUGIN_VERSION) {
+        createTestConfig(mockScansServer.address, develocityPluginVersion)
     }
 
-    class TestConfig {
-        String serverUrl = mockScansServer.address.toString()
+    static DvInjectionTestConfig createTestConfig(URI serverAddress, String develocityPluginVersion = DEVELOCITY_PLUGIN_VERSION) {
+        new DvInjectionTestConfig(serverAddress, develocityPluginVersion.toString())
+    }
+
+    static class DvInjectionTestConfig {
+        String serverUrl
         boolean enforceUrl = false
         String ccudPluginVersion = null
         String pluginRepositoryUrl = null
@@ -425,38 +429,39 @@ class TestDevelocityInjection extends BaseInitScriptTest {
         boolean captureFileFingerprints = false
         String develocityPluginVersion
 
-        TestConfig(String develocityPluginVersion) {
+        DvInjectionTestConfig(URI serverAddress, String develocityPluginVersion) {
+            this.serverUrl = serverAddress.toString()
             this.develocityPluginVersion = develocityPluginVersion
         }
 
-        TestConfig withCCUDPlugin(String version = CCUD_PLUGIN_VERSION) {
+        DvInjectionTestConfig withCCUDPlugin(String version = CCUD_PLUGIN_VERSION) {
             ccudPluginVersion = version
             return this
         }
 
-        TestConfig withServer(URI url, boolean enforceUrl = false) {
+        DvInjectionTestConfig withServer(URI url, boolean enforceUrl = false) {
             serverUrl = url.toASCIIString()
             this.enforceUrl = enforceUrl
             return this
         }
 
-        TestConfig withPluginRepository(URI pluginRepositoryUrl) {
+        DvInjectionTestConfig withPluginRepository(URI pluginRepositoryUrl) {
             this.pluginRepositoryUrl = pluginRepositoryUrl
             return this
         }
 
-        TestConfig withCaptureFileFingerprints() {
+        DvInjectionTestConfig withCaptureFileFingerprints() {
             this.captureFileFingerprints = true
             return this
         }
 
-        TestConfig withPluginRepositoryCredentials(String pluginRepoUsername, String pluginRepoPassword) {
+        DvInjectionTestConfig withPluginRepositoryCredentials(String pluginRepoUsername, String pluginRepoPassword) {
             this.pluginRepositoryUsername = pluginRepoUsername
             this.pluginRepositoryPassword = pluginRepoPassword
             return this
         }
 
-        def getEnvVars() {
+        Map<String, String> getEnvVars() {
             Map<String, String> envVars = [
                 DEVELOCITY_INJECTION_INIT_SCRIPT_NAME     : "develocity-injection.init.gradle",
                 DEVELOCITY_INJECTION_ENABLED              : "true",
