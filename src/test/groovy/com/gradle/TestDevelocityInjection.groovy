@@ -408,7 +408,7 @@ class TestDevelocityInjection extends BaseInitScriptTest {
     }
 
     private BuildResult run(TestGradleVersion testGradleVersion, TestConfig config, List<String> args = ["help"]) {
-        return run(args, testGradleVersion.gradleVersion, config.jvmArgs, config.envVars)
+        return run(args, testGradleVersion.gradleVersion, config.envVars)
     }
 
     private TestConfig testConfig(String develocityPluginVersion = DEVELOCITY_PLUGIN_VERSION) {
@@ -472,29 +472,7 @@ class TestDevelocityInjection extends BaseInitScriptTest {
             if (pluginRepositoryUsername != null) envVars.put("GRADLE_PLUGIN_REPOSITORY_USERNAME", pluginRepositoryUsername)
             if (pluginRepositoryPassword != null) envVars.put("GRADLE_PLUGIN_REPOSITORY_PASSWORD", pluginRepositoryPassword)
             if (captureFileFingerprints) envVars.put("DEVELOCITY_CAPTURE_FILE_FINGERPRINTS", "true")
-
             return envVars
-        }
-
-        def getJvmArgs() {
-            List<String> jvmArgs = [
-                "-Ddevelocity.injection.init-script-name=develocity-injection.init.gradle",
-                "-Ddevelocity.injection-enabled=true",
-                "-Ddevelocity.url=$serverUrl",
-                "-Ddevelocity.allow-untrusted-server=true",
-                "-Ddevelocity.plugin.version=$develocityPluginVersion",
-                "-Ddevelocity.build-scan.upload-in-background=true",
-                "-Ddevelocity.auto-injection.custom-value=gradle-actions"
-            ]
-
-            if (enforceUrl) jvmArgs.add("-Ddevelocity.enforce-url=true")
-            if (ccudPluginVersion != null) jvmArgs.add("-Ddevelocity.ccud-plugin.version=$ccudPluginVersion")
-            if (pluginRepositoryUrl != null) jvmArgs.add("-Dgradle.plugin-repository.url=$pluginRepositoryUrl")
-            if (pluginRepositoryUsername != null) jvmArgs.add("-Dgradle.plugin-repository.username=$pluginRepositoryUsername")
-            if (pluginRepositoryPassword != null) jvmArgs.add("-Dgradle.plugin-repository.password=$pluginRepositoryPassword")
-            if (captureFileFingerprints) jvmArgs.add("-Ddevelocity.capture-file-fingerprints=true")
-
-            return jvmArgs.collect { it.toString() } // Convert from GStrings
         }
     }
 }

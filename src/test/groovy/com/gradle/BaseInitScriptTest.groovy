@@ -12,6 +12,7 @@ import spock.lang.AutoCleanup
 import spock.lang.Specification
 import spock.lang.TempDir
 
+import java.util.stream.Collectors
 import java.util.zip.GZIPOutputStream
 
 abstract class BaseInitScriptTest extends Specification {
@@ -181,12 +182,12 @@ abstract class BaseInitScriptTest extends Specification {
             """
     }
 
-    BuildResult run(List<String> args, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
-        def result = createRunner(args, gradleVersion, jvmArgs, envVars).build()
+    BuildResult run(List<String> args, GradleVersion gradleVersion = GradleVersion.current(), Map<String, String> envVars = [:]) {
+        def result = createRunner(args, gradleVersion, envVars).build()
         assertNoDeprecationWarning(result)
     }
 
-    GradleRunner createRunner(List<String> args, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
+    GradleRunner createRunner(List<String> args, GradleVersion gradleVersion = GradleVersion.current(), Map<String, String> envVars = [:]) {
         args << '-I' << new File(initScript).absolutePath
 
         def runner = ((DefaultGradleRunner) GradleRunner.create())
@@ -198,7 +199,7 @@ abstract class BaseInitScriptTest extends Specification {
         if (testKitSupportsEnvVars(gradleVersion)) {
             runner.withEnvironment(envVars)
         } else {
-            (runner as DefaultGradleRunner).withJvmArguments(jvmArgs)
+            (runner as DefaultGradleRunner).withJvmArguments(mapEnvVarsToSystemProps(envVars))
         }
 
         runner
@@ -212,6 +213,31 @@ abstract class BaseInitScriptTest extends Specification {
         } else {
             return gradleVersion >= GRADLE_3_X.gradleVersion
         }
+    }
+
+    // for TestKit versions that don't support environment variables, map those vars to system properties
+    private static List<String> mapEnvVarsToSystemProps(Map<String, String> envVars) {
+        def mapping = [
+            DEVELOCITY_INJECTION_ENABLED              : "develocity.injection-enabled",
+            DEVELOCITY_INJECTION_INIT_SCRIPT_NAME     : "develocity.injection.init-script-name",
+            DEVELOCITY_AUTO_INJECTION_CUSTOM_VALUE    : "develocity.auto-injection.custom-value",
+            DEVELOCITY_URL                            : "develocity.url",
+            DEVELOCITY_ALLOW_UNTRUSTED_SERVER         : "develocity.allow-untrusted-server",
+            DEVELOCITY_ENFORCE_URL                    : "develocity.enforce-url",
+            DEVELOCITY_PLUGIN_VERSION                 : "develocity.plugin.version",
+            DEVELOCITY_CCUD_PLUGIN_VERSION            : "develocity.ccud-plugin.version",
+            DEVELOCITY_BUILD_SCAN_UPLOAD_IN_BACKGROUND: "develocity.build-scan.upload-in-background",
+            DEVELOCITY_CAPTURE_FILE_FINGERPRINTS      : "develocity.capture-file-fingerprints",
+            GRADLE_PLUGIN_REPOSITORY_URL              : "gradle.plugin-repository.url",
+            GRADLE_PLUGIN_REPOSITORY_USERNAME         : "gradle.plugin-repository.username",
+            GRADLE_PLUGIN_REPOSITORY_PASSWORD         : "gradle.plugin-repository.password",
+        ]
+
+        return envVars.entrySet().stream().map(e -> {
+            def sysPropName = mapping.get(e.key)
+            if (sysPropName == null) throw new RuntimeException("No sysprop mapping for env var: ${e.key}")
+            return "-D" + sysPropName + "=" + e.value
+        }).collect(Collectors.toList())
     }
 
     BuildResult assertNoDeprecationWarning(BuildResult result) {
