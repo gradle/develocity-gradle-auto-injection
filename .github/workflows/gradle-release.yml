@@ -50,7 +50,7 @@ jobs:
     uses: ./.github/workflows/gradle-send-update-pr.yml
     with:
       version: ${{ inputs.version }}
-      repository: 'bigdaz/develocity-gitlab-templates'
+      repository: 'gradle/develocity-gitlab-templates'
       script-location: 'src/gradle/init-scripts/develocity-injection.init.gradle'
       post-process: './build.sh'
     secrets:
@@ -61,7 +61,7 @@ jobs:
     uses: ./.github/workflows/gradle-send-update-pr.yml
     with:
       version: ${{ inputs.version }}
-      repository: 'bigdaz/jenkins-gradle-plugin'
+      repository: 'jenkinsci/gradle-plugin'
       script-location: 'src/main/resources/hudson/plugins/gradle/injection/init-script.gradle'
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
