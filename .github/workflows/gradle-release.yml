@@ -47,9 +47,6 @@ jobs:
           commit_message: '[bot] Promote init-script as ${{ inputs.version }}'
           tagging_message: '${{ inputs.version }}'
 
-  #########################################
-  # CI plugins hosted in the `gradle` org #
-  #########################################
   update-gradle-actions:
     needs: [update-reference]
     uses: ./.github/workflows/gradle-send-update-pr.yml
@@ -78,11 +75,11 @@ jobs:
       script-location: 'src/main/resources/develocity/gradle/develocity-init-script.gradle'
       post-process: |
         sed -i "s/def ENV_VAR_PREFIX = ''/def ENV_VAR_PREFIX = 'bamboo_'/" src/main/resources/develocity/gradle/develocity-init-script.gradle
-    secrets: inherit
+    secrets:
+      GH_BOT_GITHUB_TOKEN: ${{ secrets.GH_TOKEN }} # bot-githubaction does not have write access
+      GH_BOT_PGP_PRIVATE_KEY: ${{ secrets.GH_BOT_PGP_PRIVATE_KEY }}
+      GH_BOT_PGP_PASSPHRASE: ${{ secrets.GH_BOT_PGP_PASSPHRASE }}
 
-  #################################################
-  # CI plugins hosted outside of the `gradle` org #
-  #################################################
   update-jenkins-gradle-plugin:
     needs: [update-reference]
     uses: ./.github/workflows/gradle-send-update-pr.yml
@@ -91,7 +88,7 @@ jobs:
       repository: 'jenkinsci/gradle-plugin'
       script-location: 'src/main/resources/hudson/plugins/gradle/injection/init-script.gradle'
     secrets:
-      GH_BOT_GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      GH_BOT_GITHUB_TOKEN: ${{ secrets.GH_TOKEN }} # bot-githubaction does not have write access
       GH_BOT_PGP_PRIVATE_KEY: ${{ secrets.GH_BOT_PGP_PRIVATE_KEY }}
       GH_BOT_PGP_PASSPHRASE: ${{ secrets.GH_BOT_PGP_PASSPHRASE }}
 
@@ -103,6 +100,6 @@ jobs:
       repository: 'bigdaz/teamcity-build-scan-plugin'
       script-location: 'agent/src/main/resources/build-scan-init.gradle'
     secrets:
-      GH_BOT_GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      GH_BOT_GITHUB_TOKEN: ${{ secrets.GH_TOKEN }} # bot-githubaction does not have write access
       GH_BOT_PGP_PRIVATE_KEY: ${{ secrets.GH_BOT_PGP_PRIVATE_KEY }}
       GH_BOT_PGP_PASSPHRASE: ${{ secrets.GH_BOT_PGP_PASSPHRASE }}
