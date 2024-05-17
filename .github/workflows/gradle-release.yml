@@ -32,18 +32,18 @@ jobs:
       - name: Commit & push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: '[bot] Update develocity-injection reference script as ${{ inputs.version }}'
+          commit_message: '[bot] Promote init-script as ${{ inputs.version }}'
           tagging_message: '${{ inputs.version }}'
 
-#  update-gradle-actions:
-#    needs: [update-reference]
-#    uses: ./.github/workflows/gradle-send-update-pr.yml
-#    with:
-#      version: ${{ inputs.version }}
-#      repository: 'gradle/actions'
-#      script-location: 'sources/src/resources/init-scripts/gradle-actions.inject-develocity.init.gradle'
-#    secrets: inherit
-#
+  update-gradle-actions:
+    needs: [update-reference]
+    uses: ./.github/workflows/gradle-send-update-pr.yml
+    with:
+      version: ${{ inputs.version }}
+      repository: 'gradle/actions'
+      script-location: 'sources/src/resources/init-scripts/gradle-actions.inject-develocity.init.gradle'
+    secrets: inherit
+
 #  update-develocity-gitlab-templates:
 #    needs: [update-reference]
 #    uses: ./.github/workflows/gradle-send-update-pr.yml
@@ -73,12 +73,12 @@ jobs:
 #      post-process: |
 #        sed -i "s/def ENV_VAR_PREFIX = ''/def ENV_VAR_PREFIX = 'bamboo_'/" src/main/resources/develocity/gradle/develocity-init-script.gradle
 #    secrets: inherit
-
-  update-develocity-teamcity-plugin:
-    needs: [update-reference]
-    uses: ./.github/workflows/gradle-send-update-pr.yml
-    with:
-      version: ${{ inputs.version }}
-      repository: 'bigdaz/teamcity-build-scan-plugin'
-      script-location: 'agent/src/main/resources/build-scan-init.gradle'
-    secrets: inherit
+#
+#  update-develocity-teamcity-plugin:
+#    needs: [update-reference]
+#    uses: ./.github/workflows/gradle-send-update-pr.yml
+#    with:
+#      version: ${{ inputs.version }}
+#      repository: 'bigdaz/teamcity-build-scan-plugin'
+#      script-location: 'agent/src/main/resources/build-scan-init.gradle'
+#    secrets: inherit
