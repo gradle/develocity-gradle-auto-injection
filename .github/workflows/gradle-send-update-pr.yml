@@ -61,10 +61,10 @@ jobs:
           title: 'Update develocity-injection init script to ${{ inputs.version }}'
           path: ${{ inputs.repository }}
           token: ${{ secrets.GH_BOT_GITHUB_TOKEN }}
-          committer:  Bot Githubaction <bot-githubaction@gradle.com>
-          author: Bot Githubaction <bot-githubaction@gradle.com>
-#          committer:  Bot Githubaction <98587996+bot-githubaction@users.noreply.github.com>
-#          author: Bot Githubaction <98587996+bot-githubaction@users.noreply.github.com>
+#          committer:  Bot Githubaction <bot-githubaction@gradle.com>
+#          author: Bot Githubaction <bot-githubaction@gradle.com>
+          committer:  Bot Githubaction <98587996+bot-githubaction@users.noreply.github.com>
+          author: Bot Githubaction <98587996+bot-githubaction@users.noreply.github.com>
 
       - name: Include link to PR in Job Summary
         if: ${{ steps.create-pr.outputs.pull-request-number }}
