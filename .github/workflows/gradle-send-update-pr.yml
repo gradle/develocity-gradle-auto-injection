@@ -38,7 +38,7 @@ jobs:
 
       - uses: actions/checkout@v4
         with:
-          ref: dd/bot-user # Include the changes commmited in the previous job
+          ref: main # Include the changes commmited in the previous job
           token: ${{ secrets.GH_BOT_GITHUB_TOKEN }}
 
       - uses: actions/checkout@v4
