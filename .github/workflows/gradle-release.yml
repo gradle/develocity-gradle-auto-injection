@@ -97,8 +97,8 @@ jobs:
     uses: ./.github/workflows/gradle-send-update-pr.yml
     with:
       version: ${{ inputs.version }}
-      repository: 'bigdaz/teamcity-build-scan-plugin'
-      script-location: 'agent/src/main/resources/build-scan-init.gradle'
+      repository: 'etiennestuder/teamcity-build-scan-plugin'
+      script-location: 'agent/src/main/resources/init-scripts/develocity-injection.init.gradle'
     secrets:
       GH_BOT_GITHUB_TOKEN: ${{ secrets.GH_TOKEN }} # bot-githubaction does not have write access
       GH_BOT_PGP_PRIVATE_KEY: ${{ secrets.GH_BOT_PGP_PRIVATE_KEY }}
