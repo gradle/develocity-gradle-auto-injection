@@ -27,10 +27,14 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+#      - name: Setup Git config
+#        shell: bash
+#        run: git config --global url."https://${{ secrets.GH_BOT_GITHUB_TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+
       - uses: actions/checkout@v4
         with:
-            ref: dd/bot-user # Include the changes commmited in the previous job
-            token: ${{ secrets.GH_BOT_GITHUB_TOKEN }}
+          ref: dd/bot-user # Include the changes commmited in the previous job
+          token: ${{ secrets.GH_BOT_GITHUB_TOKEN }}
 
       - uses: actions/checkout@v4
         with:
@@ -57,6 +61,10 @@ jobs:
           title: 'Update develocity-injection init script to ${{ inputs.version }}'
           path: ${{ inputs.repository }}
           token: ${{ secrets.GH_BOT_GITHUB_TOKEN }}
+          committer:  Bot Githubaction <bot-githubaction@gradle.com>
+          author: Bot Githubaction <bot-githubaction@gradle.com>
+#          committer:  Bot Githubaction <98587996+bot-githubaction@users.noreply.github.com>
+#          author: Bot Githubaction <98587996+bot-githubaction@users.noreply.github.com>
 
       - name: Include link to PR in Job Summary
         if: ${{ steps.create-pr.outputs.pull-request-number }}
