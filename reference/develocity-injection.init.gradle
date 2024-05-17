@@ -1,6 +1,6 @@
 /*
  * Initscript for injection of Develocity into Gradle builds.
- * Version: v0.9.0
+ * Version: v0.9.1
  */
 
 import org.gradle.util.GradleVersion
