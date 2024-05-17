@@ -55,16 +55,21 @@ jobs:
         id: create-pr
         uses: peter-evans/create-pull-request@v6
         with:
-          branch: bot/develocity-injection-init-script-update
-          delete-branch: true
-          commit-message: 'Update develocity-injection init script to ${{ inputs.version }}'
-          title: 'Update develocity-injection init script to ${{ inputs.version }}'
           path: ${{ inputs.repository }}
-          token: ${{ secrets.GH_BOT_GITHUB_TOKEN }}
-#          committer:  Bot Githubaction <bot-githubaction@gradle.com>
-#          author: Bot Githubaction <bot-githubaction@gradle.com>
           committer:  Bot Githubaction <98587996+bot-githubaction@users.noreply.github.com>
           author: Bot Githubaction <98587996+bot-githubaction@users.noreply.github.com>
+          token: ${{ secrets.GH_BOT_GITHUB_TOKEN }}
+          branch: bot/develocity-injection-init-script-update
+          delete-branch: true
+          title: 'Update develocity-injection init script to ${{ inputs.version }}'
+          body: |
+            Updates the develocity-injection init script to the latest reference script content
+            from https://github.com/gradle/develocity-ci-injection.
+          commit-message: | 
+            Update develocity-injection init script to ${{ inputs.version }}'
+
+            Updates the develocity-injection init script to the latest reference script content
+            from https://github.com/gradle/develocity-ci-injection.
 
       - name: Include link to PR in Job Summary
         if: ${{ steps.create-pr.outputs.pull-request-number }}
