@@ -104,9 +104,11 @@ if (develocityInjectionEnabled) {
     enableDevelocityInjection()
 }
 
-def buildScanCaptureEnabled = this.metaClass.respondsTo(this, 'captureBuildScanLink', String)
+// To enable build-scan capture, a `captureBuildScanLink(String)` method must be added to `BuildScanCollector`.
+def buildScanCollector = new BuildScanCollector()
+def buildScanCaptureEnabled = buildScanCollector.metaClass.respondsTo(buildScanCollector, 'captureBuildScanLink', String)
 if (buildScanCaptureEnabled) {
-    enableBuildScanLinkCapture()
+    enableBuildScanLinkCapture(buildScanCollector)
 }
 
 void enableDevelocityInjection() {
@@ -375,7 +377,7 @@ static boolean isNotAtLeast(String versionUnderTest, String referenceVersion) {
     !isAtLeast(versionUnderTest, referenceVersion)
 }
 
-void enableBuildScanLinkCapture() {
+void enableBuildScanLinkCapture(BuildScanCollector collector) {
     def BUILD_SCAN_PLUGIN_ID = 'com.gradle.build-scan'
     def DEVELOCITY_PLUGIN_ID = 'com.gradle.develocity'
 
@@ -385,28 +387,30 @@ void enableBuildScanLinkCapture() {
             pluginManager.withPlugin(BUILD_SCAN_PLUGIN_ID) {
                 // Only execute if develocity plugin isn't applied.
                 if (gradle.rootProject.extensions.findByName("develocity")) return
-                buildScanPublishedAction(buildScan)
+                buildScanPublishedAction(buildScan, collector)
             }
 
             pluginManager.withPlugin(DEVELOCITY_PLUGIN_ID) {
-                buildScanPublishedAction(develocity.buildScan)
+                buildScanPublishedAction(develocity.buildScan, collector)
             }
         }
     } else {
         gradle.settingsEvaluated { settings ->
             eachDevelocitySettingsExtension(settings) { ext ->
-                buildScanPublishedAction(ext.buildScan)
+                buildScanPublishedAction(ext.buildScan, collector)
             }
         }
     }
 }
 
-// Action will only be called if a `captureBuildScanLink` method is present in this file.
-// Add `void captureBuildScanLink(String) {}` to respond to buildScanPublished events
-void buildScanPublishedAction(def buildScanExtension) {
+// Action will only be called if a `BuildScanCollector.captureBuildScanLink` method is present.
+// Add `void captureBuildScanLink(String) {}` to the `BuildScanCollector` class to respond to buildScanPublished events
+static buildScanPublishedAction(def buildScanExtension, BuildScanCollector collector) {
     if (buildScanExtension.metaClass.respondsTo(buildScanExtension, 'buildScanPublished', Action)) {
         buildScanExtension.buildScanPublished { scan ->
-            captureBuildScanLink(scan.buildScanUri.toString())
+            collector.captureBuildScanLink(scan.buildScanUri.toString())
         }
     }
 }
+
+class BuildScanCollector {}

@@ -53,6 +53,30 @@ class TestBuildScanCapture extends BaseInitScriptTest {
         testGradleVersion << ALL_VERSIONS
     }
 
+
+    @Requires({data.testGradleVersion.compatibleWithCurrentJvm})
+    def "can capture build scan url with config-cache enabled"() {
+        given:
+        captureBuildScanLinks()
+        declareDevelocityPluginApplication(testGradleVersion.gradleVersion)
+
+        when:
+        def config = new MinimalTestConfig()
+        def result = run(['help', '--configuration-cache'], testGradleVersion.gradleVersion, config.envVars)
+
+        then:
+        buildScanUrlIsCaptured(result)
+
+        when:
+        result = run(['help', '--configuration-cache'], testGradleVersion.gradleVersion, config.envVars)
+
+        then:
+        buildScanUrlIsCaptured(result)
+
+        where:
+        testGradleVersion << CONFIGURATION_CACHE_VERSIONS
+    }
+
     void buildScanUrlIsCaptured(BuildResult result) {
         def message = "BUILD_SCAN_URL='${mockScansServer.address}s/$PUBLIC_BUILD_SCAN_ID'"
         assert result.output.contains(message)
@@ -65,11 +89,13 @@ class TestBuildScanCapture extends BaseInitScriptTest {
     }
 
     void captureBuildScanLinks() {
-        initScriptFile << '''
-            def captureBuildScanLink(String buildScanUrl) {
-                println "BUILD_SCAN_URL='${buildScanUrl}'"
+        initScriptFile.text = initScriptFile.text.replace('class BuildScanCollector {}', '''
+            class BuildScanCollector {
+                void captureBuildScanLink(String buildScanUrl) {
+                    println "BUILD_SCAN_URL='${buildScanUrl}'"
+                }
             }
-        '''
+        ''')
     }
 
     static class MinimalTestConfig {
