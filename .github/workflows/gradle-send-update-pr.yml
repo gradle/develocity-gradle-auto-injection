@@ -16,22 +16,36 @@ on:
         type: string
         required: false
     secrets:
-      GH_TOKEN:
+      GH_BOT_GITHUB_TOKEN:
         required: true
-      
+      GH_BOT_PGP_PRIVATE_KEY:
+        required: true
+      GH_BOT_PGP_PASSPHRASE:
+        required: true
+
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GH_BOT_PGP_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GH_BOT_PGP_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+          git_config_global: true
+
       - uses: actions/checkout@v4
         with:
-            ref: main # Include the changes commmited in the previous job
+          ref: dd/bot-user # Include the changes commmited in the previous job
+          token: ${{ secrets.GH_BOT_GITHUB_TOKEN }}
 
       - uses: actions/checkout@v4
         with:
           repository: ${{ inputs.repository }}
           path: ${{ inputs.repository }}
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GH_BOT_GITHUB_TOKEN }}
 
       - name: Copy reference script
         run: cp reference/develocity-injection.init.gradle ${{ inputs.repository }}/${{ inputs.script-location }}
@@ -46,15 +60,17 @@ jobs:
         id: create-pr
         uses: peter-evans/create-pull-request@v6
         with:
+          path: ${{ inputs.repository }}
+          committer:  Bot Githubaction <bot-githubaction@gradle.com>
+          author: Bot Githubaction <bot-githubaction@gradle.com>
+          token: ${{ secrets.GH_BOT_GITHUB_TOKEN }}
           branch: bot/develocity-injection-init-script-update
           delete-branch: true
-          path: ${{ inputs.repository }}
-          token: ${{ secrets.GH_TOKEN }}
           title: 'Update develocity-injection init script to ${{ inputs.version }}'
           body: |
             Updates the develocity-injection init script to the latest reference script content
             from https://github.com/gradle/develocity-ci-injection.
-          commit-message: |
+          commit-message: | 
             Update develocity-injection init script to ${{ inputs.version }}
 
             Updates the develocity-injection init script to the latest reference script content

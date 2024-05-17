@@ -47,6 +47,9 @@ jobs:
           commit_message: '[bot] Promote init-script as ${{ inputs.version }}'
           tagging_message: '${{ inputs.version }}'
 
+  #########################################
+  # CI plugins hosted in the `gradle` org #
+  #########################################
   update-gradle-actions:
     needs: [update-reference]
     uses: ./.github/workflows/gradle-send-update-pr.yml
@@ -54,8 +57,7 @@ jobs:
       version: ${{ inputs.version }}
       repository: 'gradle/actions'
       script-location: 'sources/src/resources/init-scripts/gradle-actions.inject-develocity.init.gradle'
-    secrets:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    secrets: inherit
 
   update-develocity-gitlab-templates:
     needs: [update-reference]
@@ -65,18 +67,7 @@ jobs:
       repository: 'gradle/develocity-gitlab-templates'
       script-location: 'src/gradle/init-scripts/develocity-injection.init.gradle'
       post-process: './build.sh'
-    secrets:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-  update-jenkins-gradle-plugin:
-    needs: [update-reference]
-    uses: ./.github/workflows/gradle-send-update-pr.yml
-    with:
-      version: ${{ inputs.version }}
-      repository: 'jenkinsci/gradle-plugin'
-      script-location: 'src/main/resources/hudson/plugins/gradle/injection/init-script.gradle'
-    secrets:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    secrets: inherit
 
   update-develocity-bamboo-plugin:
     needs: [update-reference]
@@ -87,8 +78,22 @@ jobs:
       script-location: 'src/main/resources/develocity/gradle/develocity-init-script.gradle'
       post-process: |
         sed -i "s/def ENV_VAR_PREFIX = ''/def ENV_VAR_PREFIX = 'bamboo_'/" src/main/resources/develocity/gradle/develocity-init-script.gradle
+    secrets: inherit
+
+  #################################################
+  # CI plugins hosted outside of the `gradle` org #
+  #################################################
+  update-jenkins-gradle-plugin:
+    needs: [update-reference]
+    uses: ./.github/workflows/gradle-send-update-pr.yml
+    with:
+      version: ${{ inputs.version }}
+      repository: 'jenkinsci/gradle-plugin'
+      script-location: 'src/main/resources/hudson/plugins/gradle/injection/init-script.gradle'
     secrets:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      GH_BOT_GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      GH_BOT_PGP_PRIVATE_KEY: ${{ secrets.GH_BOT_PGP_PRIVATE_KEY }}
+      GH_BOT_PGP_PASSPHRASE: ${{ secrets.GH_BOT_PGP_PASSPHRASE }}
 
   update-develocity-teamcity-plugin:
     needs: [update-reference]
@@ -98,4 +103,6 @@ jobs:
       repository: 'bigdaz/teamcity-build-scan-plugin'
       script-location: 'agent/src/main/resources/build-scan-init.gradle'
     secrets:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      GH_BOT_GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      GH_BOT_PGP_PRIVATE_KEY: ${{ secrets.GH_BOT_PGP_PRIVATE_KEY }}
+      GH_BOT_PGP_PASSPHRASE: ${{ secrets.GH_BOT_PGP_PASSPHRASE }}
