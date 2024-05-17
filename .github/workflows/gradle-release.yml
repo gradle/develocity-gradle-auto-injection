@@ -41,11 +41,11 @@ jobs:
       - name: Commit & push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_author: bot-githubaction <98587996+bot-githubaction@users.noreply.github.com>
+          commit_author: bot-githubaction <bot-githubaction@gradle.com>
           commit_user_name: bot-githubaction
-          commit_user_email: 98587996+bot-githubaction@users.noreply.github.com
+          commit_user_email: bot-githubaction@gradle.com
           commit_message: '[bot] Promote init-script as ${{ inputs.version }}'
-#          tagging_message: '${{ inputs.version }}'
+          tagging_message: '${{ inputs.version }}'
 
 #  update-gradle-actions:
 #    needs: [update-reference]
