@@ -16,9 +16,13 @@ on:
         type: string
         required: false
     secrets:
-      GH_TOKEN:
+      GH_BOT_GITHUB_TOKEN:
         required: true
-      
+      GH_BOT_PGP_PRIVATE_KEY:
+        required: true
+      GH_BOT_PGP_PASSPHRASE:
+        required: true
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -26,12 +30,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
             ref: main # Include the changes commmited in the previous job
+            token: ${{ secrets.GH_BOT_GITHUB_TOKEN }}
 
       - uses: actions/checkout@v4
         with:
           repository: ${{ inputs.repository }}
           path: ${{ inputs.repository }}
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GH_BOT_GITHUB_TOKEN }}
 
       - name: Copy reference script
         run: cp reference/develocity-injection.init.gradle ${{ inputs.repository }}/${{ inputs.script-location }}
@@ -49,9 +54,9 @@ jobs:
           branch: bot/develocity-injection-init-script-update
           delete-branch: true
           commit-message: 'Update develocity-injection init script to ${{ inputs.version }}'
-          title: 'Update develocity-injection init script'
+          title: 'Update develocity-injection init script to ${{ inputs.version }}'
           path: ${{ inputs.repository }}
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GH_BOT_GITHUB_TOKEN }}
 
       - name: Include link to PR in Job Summary
         if: ${{ steps.create-pr.outputs.pull-request-number }}
