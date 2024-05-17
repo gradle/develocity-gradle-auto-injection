@@ -15,6 +15,15 @@ jobs:
   update-reference:
     runs-on: ubuntu-latest
     steps:
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GH_BOT_PGP_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GH_BOT_PGP_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+          git_config_global: true
+
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
@@ -32,17 +41,20 @@ jobs:
       - name: Commit & push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
+          commit_author: bot-githubactions <bot-githubactions@gradle.com>
+          commit_user_name: bot-githubactions
+          commit_user_email: bot-githubactions@gradle.com
           commit_message: '[bot] Promote init-script as ${{ inputs.version }}'
           tagging_message: '${{ inputs.version }}'
 
-  update-gradle-actions:
-    needs: [update-reference]
-    uses: ./.github/workflows/gradle-send-update-pr.yml
-    with:
-      version: ${{ inputs.version }}
-      repository: 'gradle/actions'
-      script-location: 'sources/src/resources/init-scripts/gradle-actions.inject-develocity.init.gradle'
-    secrets: inherit
+#  update-gradle-actions:
+#    needs: [update-reference]
+#    uses: ./.github/workflows/gradle-send-update-pr.yml
+#    with:
+#      version: ${{ inputs.version }}
+#      repository: 'gradle/actions'
+#      script-location: 'sources/src/resources/init-scripts/gradle-actions.inject-develocity.init.gradle'
+#    secrets: inherit
 
 #  update-develocity-gitlab-templates:
 #    needs: [update-reference]
