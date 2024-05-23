@@ -18,30 +18,13 @@ An init-script that can be used by CI integrations to inject Develocity into a G
   - Commit the new reference script to this repository
   - [Create PRs to update the script](https://github.com/gradle/develocity-ci-injection/actions/runs/9102707566/workflow#L48-L57) in various CI plugin repositories. [See here for an example run](https://github.com/gradle/develocity-ci-injection/actions/runs/9102707566) with links to generated PRs.
  
+## Existing Develocity CI integrations
 
-### Current status of CI integrations
+The following Develocity CI integrations leverage the Gradle init-script from this repository.
 
-#### GitHub Action for Gradle
+- GitHub Actions: [The 'setup-gradle' action](https://github.com/gradle/actions/tree/main/setup-gradle)
+- Bamboo: [Develocity Bamboo Plugin](https://github.com/gradle/develocity-bamboo-plugin)
+- Jenkins: [Jenkins Gradle Plugin](https://github.com/bigdaz/jenkins-gradle-plugin)
+- GitLab: [Develocity Gitlab Templates](https://github.com/bigdaz/develocity-gitlab-templates)
+- TeamCity: [TeamCity Build Scan Plugin](https://github.com/etiennestuder/teamcity-build-scan-plugin)
 
-- Ready to merge: https://github.com/gradle/actions/pull/215/files
-
-#### Develocity Bamboo plugin
-
-- [Uses `sed` to add 'bamboo_' as an environment variable prefix](https://github.com/gradle/develocity-ci-injection/blob/main/.github/workflows/gradle-release.yml#L77)
-- Ready to merge: https://github.com/gradle/develocity-bamboo-plugin/pull/157/files
-
-#### Jenkins Gradle plugin
-
-- PR against a repository fork: Git token in repo does not have permissions to create branch on `jenkinsci/gradle-plugin`.
-- PR to merge into fork: https://github.com/bigdaz/jenkins-gradle-plugin/pull/1/files
-
-#### GitLab templates
-
-- Uses a build process to merge the reference build script into `develocity-gradle.yml`
-- PR against a repository fork: Git token in repo does not have permissions to create branch on `gradle/develocity-gitlab-templates`.
-- PR to merge into fork: https://github.com/bigdaz/develocity-gitlab-templates/pull/2/files
-
-#### TeamCity plugin
-
-- Changes are required to reference script in order to support capture of build-scan links. This could also be leveraged in Jenkins plugin.
-- Currently generating PR against repository fork, but this is incomplete.
