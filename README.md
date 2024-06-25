@@ -24,7 +24,6 @@ The following Develocity CI integrations leverage the Gradle init-script from th
 
 - GitHub Actions: [The 'setup-gradle' action](https://github.com/gradle/actions/tree/main/setup-gradle)
 - Bamboo: [Develocity Bamboo Plugin](https://github.com/gradle/develocity-bamboo-plugin)
-- Jenkins: [Jenkins Gradle Plugin](https://github.com/bigdaz/jenkins-gradle-plugin)
-- GitLab: [Develocity Gitlab Templates](https://github.com/bigdaz/develocity-gitlab-templates)
+- Jenkins: [Jenkins Gradle Plugin](https://github.com/jenkinsci/gradle-plugin)
+- GitLab: [Develocity Gitlab Templates](https://github.com/gradle/develocity-gitlab-templates)
 - TeamCity: [TeamCity Build Scan Plugin](https://github.com/etiennestuder/teamcity-build-scan-plugin)
-
